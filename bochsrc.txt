@@ -1,0 +1,10 @@
+megs: 32
+romimage: file=/usr/share/bochs/BIOS-bochs-latest, address=0xfffe0000
+vgaromimage: file=/usr/share/bochs/VGABIOS-lgpl-latest
+ata1-master: type=cdrom, path=myos.iso, status=inserted
+boot: cdrom
+display_library: sdl
+log: bochsout.txt
+mouse: enabled=0
+clock: sync=realtime
+cpu: ips=500000

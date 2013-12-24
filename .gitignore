@@ -2,3 +2,5 @@ isodir/*
 myos.iso
 *.o
 *.bin
+a.out
+bochsout.txt

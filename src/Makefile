@@ -1,9 +1,7 @@
 TARGET=/home/thomas/osDev/opt/cross/bin/i586-elf
 
-#CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra
-CFLAGS=-std=gnu99 -ffreestanding -Wall -Wextra
-#LDFLAGS=-T linker.ld -ffreestanding -O2 -nostdlib -lgcc
-LDFLAGS=-T linker.ld -ffreestanding -nostdlib -lgcc
+CFLAGS=-std=gnu99 -ffreestanding -O2 -Wall -Wextra
+LDFLAGS=-T linker.ld -ffreestanding -O2 -nostdlib -lgcc
 
 
 all: myos.bin
@@ -24,7 +22,7 @@ descriptor_tables.o: descriptor_tables.c descriptor_tables.c
 common.o: common.c common.c
 	$(TARGET)-gcc -c common.c -o common.o $(CFLAGS)
 
-isr.o: isr.c isr.c
+isr.o: isr.c isr.h
 	$(TARGET)-gcc -c isr.c -o isr.o $(CFLAGS)
 
 boot.o: boot.s

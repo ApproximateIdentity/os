@@ -27,7 +27,7 @@ inw(uint16_t port) {
 
 // Copy len bytes from src to dest.
 void
-memcpy(uint8_t *dest, const uint8_t *src, uint32_t len) {
+memcpy(uint32_t *dest, const uint32_t *src, uint32_t len) {
     const uint8_t *sp = (const uint8_t *)src;
     uint8_t *dp = (uint8_t *)dest;
     for(; len != 0; len--) *dp++ = *sp++;
@@ -35,7 +35,7 @@ memcpy(uint8_t *dest, const uint8_t *src, uint32_t len) {
 
 // Write len copies of val into dest.
 void
-memset(uint8_t *dest, uint8_t val, uint32_t len) {
+memset(uint32_t *dest, uint8_t val, uint32_t len) {
     uint8_t *temp = (uint8_t *)dest;
     for ( ; len != 0; len--) *temp++ = val;
 }

@@ -99,3 +99,25 @@ terminal_writestring(const char* data) {
 		terminal_putchar(data[i]);
     }
 }
+
+void
+terminal_writenum(uint32_t n) {
+    if (n == 0) {
+        terminal_putchar('0');
+        return;
+    } else {
+        uint32_t acc = n;
+        char num[32];
+        int i = 0;
+
+        while (acc > 0) {
+            num[i] = '0' + acc%10;
+            acc /= 10;
+            i++;
+        }
+
+        while (i > 0) {
+            terminal_putchar(num[--i]);
+        }
+    }
+}

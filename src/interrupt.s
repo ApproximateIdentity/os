@@ -9,20 +9,10 @@
 .global isr\num
 isr\num:
  cli
-# Is this in right order???
  push $0
- push \num
+ push $\num
  jmp isr_common_stub
 .endm
-
-#%macro ISR_NOERRCODE 1
-  #global isr%1
-  #isr%1:
-    #cli                         ; Disable interrupts firstly.
-    #push byte 0                 ; Push a dummy error code.
-    #push byte %1                ; Push the interrupt number.
-    #jmp isr_common_stub         ; Go to our common handler code.
-#%endmacro
 
 # This macro creates a stub for an ISR which passes it's own
 # error code.
@@ -30,17 +20,9 @@ isr\num:
 .global isr\num
 isr\num:
  cli
- push \num
+ push $\num
  jmp isr_common_stub
 .endm
-
-#%macro ISR_ERRCODE 1
-#  global isr%1
-#  isr%1:
-#    cli                         ; Disable interrupts.
-#    push byte %1                ; Push the interrupt number
-#    jmp isr_common_stub
-#%endmacro
 
 ISR_NOERRCODE 0
 ISR_NOERRCODE 1
@@ -75,9 +57,6 @@ ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
  
-#; In isr.c
-# extern isr_handler
-#
 #; This is our common ISR stub. It saves the processor state, sets
 #; up for kernel mode segments, calls the C-level fault handler,
 #; and finally restores the stack frame.
@@ -93,7 +72,11 @@ isr_common_stub:
  mov %ax, %fs
  mov %ax, %gs
 
- call isr_handler
+ push %esp # Push address to pass by reference
+
+ call isr_handler # In isr.c
+
+ add $4, %esp
 
  pop %ebx        # reload the original data segment descriptor
  mov %bx, %ds

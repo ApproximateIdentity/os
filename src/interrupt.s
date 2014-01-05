@@ -4,24 +4,24 @@
 #                Rewritten for JamesM's kernel development tutorials.
 
 # This macro creates a stub for an ISR which does NOT pass it's own
-# error code (adds a dummy errcode byte).
-.macro ISR_NOERRCODE num
+# error code.
+.macro  ISR_NOERRCODE num
 .global isr\num
 isr\num:
  cli
- push $0
- push $\num
- jmp isr_common_stub
+ push   $0
+ push   $\num
+ jmp    isr_common_stub
 .endm
 
 # This macro creates a stub for an ISR which passes it's own
 # error code.
-.macro ISR_ERRCODE num
+.macro  ISR_ERRCODE num
 .global isr\num
 isr\num:
  cli
- push $\num
- jmp isr_common_stub
+ push   $\num
+ jmp    isr_common_stub
 .endm
 
 ISR_NOERRCODE 0
@@ -56,35 +56,43 @@ ISR_NOERRCODE 28
 ISR_NOERRCODE 29
 ISR_NOERRCODE 30
 ISR_NOERRCODE 31
- 
-#; This is our common ISR stub. It saves the processor state, sets
-#; up for kernel mode segments, calls the C-level fault handler,
-#; and finally restores the stack frame.
+
+
+# This is our common ISR stub. It saves the processor state, sets
+# up for kernel mode segments, calls the C-level fault handler,
+# and finally restores the stack frame.
 isr_common_stub:
- pusha                    # Pushes edi,esi,ebp,esp,ebx,edx,ecx,eax
+ push   %eax            # Save scratch registers
+ push   %ecx
+ push   %edx
 
- mov %ds, %ax               # Lower 16-bits of eax = ds.
- push %eax                 # save the data segment descriptor
+ mov    %ds,    %eax
+ push   %eax
 
- mov $0x10, %ax  # load the kernel data segment descriptor
- mov %ax, %ds
- mov %ax, %es
- mov %ax, %fs
- mov %ax, %gs
+ mov    $0x10,  %ax     # load the kernel data segment descriptor
+ mov    %ax,    %ds
+ mov    %ax,    %es
+ mov    %ax,    %fs
+ mov    %ax,    %gs
 
- push %esp # Push address to pass by reference
+ movl   %esp,   %eax    # Pass address of err code
+ addl   $16,    %eax
+ push   %eax
 
- call isr_handler # In isr.c
+ call   isr_handler
 
- add $4, %esp
+ addl   $4,     %esp
 
- pop %ebx        # reload the original data segment descriptor
- mov %bx, %ds
- mov %bx, %es
- mov %bx, %fs
- mov %bx, %gs
+ pop    %ecx            # Reload the original data segment descriptor
+ mov    %cx,    %ds
+ mov    %cx,    %es
+ mov    %cx,    %fs
+ mov    %cx,    %gs
 
- popa                     # Pops edi,esi,ebp...
- add $8, %esp     # Cleans up the pushed error code and pushed ISR number
+ pop    %edx            # Restore scratch registers
+ pop    %ecx
+ pop    %eax
+ 
+ addl   $8,     %esp    # Clean up pushed err code/number
  sti
- iret           # pops 5 things at once: CS, EIP, EFLAGS, SS, and ESP
+ iret

@@ -22,7 +22,17 @@
 #define IRQ14 46
 #define IRQ15 47
 
-struct isr_error {
+struct isr_err {
     uint32_t int_no;
     uint32_t err_code;
 } __attribute__((packed));
+
+typedef struct isr_err err_t;
+
+// Enables registration of callbacks for interrupts or IRQs
+// For IRQs, to ease confusion, use the #defines above as the
+// first parameter.
+typedef void (*isr_t)(err_t *err);
+
+void register_interrupt_handler(uint8_t n, isr_t handler);
+

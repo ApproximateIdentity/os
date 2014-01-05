@@ -2,6 +2,7 @@
 
 #include "monitor.h"
 #include "descriptor_tables.h"
+#include "timer.h"
 
 void
 kernel_main() {
@@ -9,4 +10,7 @@ kernel_main() {
     terminal_initialize();
     asm volatile ("int $0x1");
     asm volatile ("int $0x2");
+
+    asm volatile("sti");
+    init_timer(50);
 }

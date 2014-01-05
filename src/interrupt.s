@@ -123,3 +123,42 @@ isr_common_stub:
  addl   $8,     %esp    # Clean up pushed err code/number
  sti
  iret
+
+# This is our common IRQ stub. It saves the processor state, sets
+# up for kernel mode segments, calls the C-level fault handler,
+# and finally restores the stack frame.
+irq_common_stub:
+ push   %eax            # Save scratch registers
+ push   %ecx
+ push   %edx
+
+ mov    %ds,    %eax
+ push   %eax
+
+ mov    $0x10,  %ax     # load the kernel data segment descriptor
+ mov    %ax,    %ds
+ mov    %ax,    %es
+ mov    %ax,    %fs
+ mov    %ax,    %gs
+
+ movl   %esp,   %eax    # Pass address of err code
+ addl   $16,    %eax
+ push   %eax
+
+ call   irq_handler
+
+ addl   $4,     %esp
+
+ pop    %ecx            # Reload the original data segment descriptor
+ mov    %cx,    %ds
+ mov    %cx,    %es
+ mov    %cx,    %fs
+ mov    %cx,    %gs
+
+ pop    %edx            # Restore scratch registers
+ pop    %ecx
+ pop    %eax
+ 
+ addl   $8,     %esp    # Clean up pushed err code/number
+ sti
+ iret

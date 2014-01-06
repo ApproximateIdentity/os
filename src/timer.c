@@ -8,10 +8,12 @@
 #include "monitor.h"
 #include "common.h"
 
+#define IRQ0 32
+
 uint32_t tick = 0;
 
 static void
-timer_callback(void)
+timer_callback(err_t *err)
 {
    tick++;
    terminal_writestring("Tick: ");

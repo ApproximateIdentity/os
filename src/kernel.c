@@ -11,6 +11,6 @@ kernel_main() {
     asm volatile ("int $0x1");
     asm volatile ("int $0x2");
 
-    asm volatile("sti");
+    asm volatile ("sti");
     init_timer(50);
 }

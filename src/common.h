@@ -14,10 +14,10 @@ uint16_t
 inw(uint16_t port);
 
 void
-memcpy(uint32_t *dest, const uint32_t *src, uint32_t len);
+memcpy(uintptr_t dest, uintptr_t src, uint32_t len);
 
 void
-memset(uint32_t *dest, uint8_t val, uint32_t len);
+memset(uintptr_t dest, uint8_t val, uint32_t len);
 
 int
 strcmp(char *str1, char *str2);

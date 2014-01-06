@@ -136,7 +136,7 @@ init_descriptor_tables() {
     init_gdt();
     init_idt();
     // Nullify all the interrupt handlers.
-    memset((uint32_t *)&interrupt_handlers, 0, sizeof(isr_t)*256);
+    memset((uintptr_t)&interrupt_handlers, 0, sizeof(isr_t)*256);
 }
 
 static void
@@ -173,7 +173,7 @@ init_idt() {
     idt_ptr.limit = sizeof(idt_entry_t) * 256 -1;
     idt_ptr.base  = (uint32_t)&idt_entries;
 
-    memset((uint32_t *)&idt_entries, 0, sizeof(idt_entry_t)*256);
+    memset((uintptr_t)&idt_entries, 0, sizeof(idt_entry_t)*256);
 
     // Remap the irq table.
     outb(0x20, 0x11);
